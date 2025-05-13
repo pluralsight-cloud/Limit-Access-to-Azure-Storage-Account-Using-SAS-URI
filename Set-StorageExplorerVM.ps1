@@ -40,7 +40,7 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAVolume" -Value 1
 
 # Disable Server Manager
-Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -name "DoNotOpenServerManagerAtLogon" -Value 1 -Force -ErrorAction SilentlyContinue
 
 # Disable the Privacy Experience
 $RegistryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OOBE"
@@ -57,5 +57,17 @@ if (-not (Test-Path $DataCollectionPath)) {
 New-ItemProperty -Path $DataCollectionPath -Name "AllowTelemetry" -Value 0 -PropertyType DWORD -Force
 New-ItemProperty -Path $DataCollectionPath -Name "DisableDiagnosticDataViewer" -Value 1 -PropertyType DWORD -Force
 
-# Install Azure Storage Explorer with Winget
-winget install --id=Microsoft.Azure.StorageExplorer -v "1.38.0" --exact --silent --accept-source-agreements --accept-package-agreements
+# Install Chocolatey
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Import Chocolately Profile
+$env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+
+# Update Environmental Variables
+Update-SessionEnvironment
+
+# Configure Software
+choco install microsoftazurestorageexplorer --version 1.38.0 -y --no-progress
