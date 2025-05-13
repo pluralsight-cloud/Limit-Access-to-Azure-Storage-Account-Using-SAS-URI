@@ -58,4 +58,4 @@ New-ItemProperty -Path $DataCollectionPath -Name "AllowTelemetry" -Value 0 -Prop
 New-ItemProperty -Path $DataCollectionPath -Name "DisableDiagnosticDataViewer" -Value 1 -PropertyType DWORD -Force
 
 # Install Azure Storage Explorer with Winget
-winget install --id=Microsoft.Azure.StorageExplorer -v "1.38.0" -e
+winget install --id=Microsoft.Azure.StorageExplorer -v "1.38.0" --exact --silent --accept-source-agreements --accept-package-agreements
