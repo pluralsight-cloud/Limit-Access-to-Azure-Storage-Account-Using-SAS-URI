@@ -71,3 +71,6 @@ Update-SessionEnvironment
 
 # Configure Software
 choco install microsoftazurestorageexplorer --version 1.38.0 -y --no-progress
+
+# Create Desktop Shortcuts
+Get-ChildItem -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Azure Storage Explorer" -Recurse | Copy-Item -Destination "$env:PUBLIC\Desktop"
